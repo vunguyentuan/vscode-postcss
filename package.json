@@ -1,0 +1,86 @@
+{
+  "name": "postcss-pack",
+  "version": "2.3.4",
+  "displayName": "PostCSS Intellisense and Highlighting",
+  "description": "Syntax highlighting and intellisense for PostCSS",
+  "publisher": "vunguyentuan",
+  "engines": {
+    "vscode": "^1.47.0",
+    "node": "^14.18.2"
+  },
+  "keywords": [
+    "postcss",
+    "syntax",
+    "highlighting",
+    "intellisense",
+    "autocomplete"
+  ],
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "icon": "icon/css.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vunguyentuan/vscode-postcss.git"
+  },
+  "main": "./client/out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "postcss",
+        "configuration": "./postcss.language.configuration.json",
+        "aliases": [
+          "PostCSS",
+          "pcss"
+        ],
+        "extensions": [
+          ".css",
+          ".pcss",
+          ".postcss"
+        ],
+        "mimetypes": [
+          "text/css",
+          "text/x-pcss",
+          "text/pcss"
+        ]
+      }
+    ],
+    "grammars": [
+      {
+        "scopeName": "source.css",
+        "path": "./syntaxes/source.css.tmLanguage.json",
+        "language": "postcss"
+      },
+      {
+        "scopeName": "text.html.markdown.css",
+        "path": "./syntaxes/text.html.markdown.css.tmLanguage.json",
+        "injectTo": [
+          "text.html.markdown"
+        ],
+        "embeddedLanguages": {
+          "meta.embedded.block.css": "postcss"
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -b",
+    "watch": "tsc -b -w",
+    "lint": "eslint ./client/src ./server/src --ext .ts,.tsx",
+    "postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
+    "test": "sh ./scripts/e2e.sh"
+  },
+  "devDependencies": {
+    "@types/mocha": "^8.2.2",
+    "@types/node": "^12.12.0",
+    "@typescript-eslint/eslint-plugin": "^4.23.0",
+    "@typescript-eslint/parser": "^4.23.0",
+    "eslint": "^7.26.0",
+    "mocha": "^8.3.2",
+    "typescript": "^4.4.3"
+  }
+}
