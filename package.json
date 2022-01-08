@@ -21,7 +21,7 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "icon": "icon/css.png",
+  "icon": "logo.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/vunguyentuan/vscode-postcss.git"
