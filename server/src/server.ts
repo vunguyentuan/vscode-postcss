@@ -9,11 +9,12 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 import {
-  getSCSSLanguageService,
+  getPostCSSLanguageService,
   LanguageSettings,
   LanguageService,
   Stylesheet,
-} from 'vscode-css-languageservice';
+} from './vscode-css-languageservice/cssLanguageService';
+
 import { getLanguageModelCache } from './languageModelCache';
 
 export interface Settings {
@@ -68,7 +69,7 @@ connection.onInitialize((params: InitializeParams): InitializeResult => {
 });
 
 const languageServices: { [id: string]: LanguageService } = {
-  css: getSCSSLanguageService(),
+  css: getPostCSSLanguageService(),
 };
 
 function getLanguageService(document: TextDocument) {
@@ -129,18 +130,18 @@ function validateTextDocument(textDocument: TextDocument): void {
   );
 
   // fiter out postcss syntax errors with regex /Unknown at rule @custom-/
-  const filteredDiagnostics = diagnostics.filter(
-    (diagnostic) =>
-      !(
-        diagnostic.message.match(/Unknown at rule @/) ||
-        diagnostic.message.match(/Unknown property: '(composes)/)
-      )
-  );
+  // const filteredDiagnostics = diagnostics.filter(
+  //   (diagnostic) =>
+  //     !(
+  //       diagnostic.message.match(/Unknown at rule @/) ||
+  //       diagnostic.message.match(/Unknown property: '(composes)/)
+  //     )
+  // );
 
   // Send the computed diagnostics to VSCode.
   connection.sendDiagnostics({
     uri: textDocument.uri,
-    diagnostics: filteredDiagnostics,
+    diagnostics: diagnostics,
   });
 }
 

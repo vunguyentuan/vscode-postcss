@@ -661,7 +661,7 @@
                   "name": "punctuation.definition.keyword.css"
                 }
               },
-              "end": ";",
+              "end": "$\n?|\\s(?!(all|braille|embossed|handheld|print|projection|screen|speech|tty|tv|if|only|not)(\\s|,))|(?=;)",
               "endCaptures": {
                 "0": {
                   "name": "punctuation.terminator.rule.css"
