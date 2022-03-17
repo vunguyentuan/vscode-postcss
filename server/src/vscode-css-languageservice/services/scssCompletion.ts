@@ -271,7 +271,7 @@ export class SCSSCompletion extends CSSCompletion {
 		const parentType = importPathNode.getParent()!.type;
 
 		if (parentType === nodes.NodeType.Forward || parentType === nodes.NodeType.Use) {
-			for (let p of SCSSCompletion.scssModuleBuiltIns) {
+			for (const p of SCSSCompletion.scssModuleBuiltIns) {
 				const item: CompletionItem = {
 					label: p.label,
 					documentation: p.documentation,

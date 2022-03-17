@@ -10,11 +10,6 @@ import { CSSHover } from './services/cssHover';
 import { CSSNavigation } from './services/cssNavigation';
 import { CSSCodeActions } from './services/cssCodeActions';
 import { CSSValidation } from './services/cssValidation';
-
-import { SCSSParser } from './parser/scssParser';
-import { SCSSCompletion } from './services/scssCompletion';
-import { LESSParser } from './parser/lessParser';
-import { LESSCompletion } from './services/lessCompletion';
 import { getFoldingRanges } from './services/cssFolding';
 
 import {
@@ -50,9 +45,10 @@ import {
 import { CSSDataManager } from './languageFacts/dataManager';
 import { CSSDataProvider } from './languageFacts/dataProvider';
 import { getSelectionRanges } from './services/cssSelectionRange';
-import { SCSSNavigation } from './services/scssNavigation';
 import { cssData } from './data/webCustomData';
 import { PostCSSParser } from './parser/postCSSParser';
+import { PostCSSCompletion } from './services/postcssCompletion';
+import { PostCSSNavigation } from './services/postCSSNavigation';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type Stylesheet = {}
@@ -212,60 +208,15 @@ function createFacade(
 
 const defaultLanguageServiceOptions = {};
 
-export function getCSSLanguageService(
-  options: LanguageServiceOptions = defaultLanguageServiceOptions
-): LanguageService {
-  const cssDataManager = new CSSDataManager(options);
-  return createFacade(
-    new Parser(),
-    new CSSCompletion(null, options, cssDataManager),
-    new CSSHover(options && options.clientCapabilities, cssDataManager),
-    new CSSNavigation(options && options.fileSystemProvider, false),
-    new CSSCodeActions(cssDataManager),
-    new CSSValidation(cssDataManager),
-    cssDataManager
-  );
-}
-
-export function getSCSSLanguageService(
-  options: LanguageServiceOptions = defaultLanguageServiceOptions
-): LanguageService {
-  const cssDataManager = new CSSDataManager(options);
-  return createFacade(
-    new SCSSParser(),
-    new SCSSCompletion(options, cssDataManager),
-    new CSSHover(options && options.clientCapabilities, cssDataManager),
-    new SCSSNavigation(options && options.fileSystemProvider),
-    new CSSCodeActions(cssDataManager),
-    new CSSValidation(cssDataManager),
-    cssDataManager
-  );
-}
-
 export function getPostCSSLanguageService(
   options: LanguageServiceOptions = defaultLanguageServiceOptions
 ): LanguageService {
   const cssDataManager = new CSSDataManager(options);
   return createFacade(
     new PostCSSParser(),
-    new SCSSCompletion(options, cssDataManager),
+    new PostCSSCompletion(options, cssDataManager),
     new CSSHover(options && options.clientCapabilities, cssDataManager),
-    new SCSSNavigation(options && options.fileSystemProvider),
-    new CSSCodeActions(cssDataManager),
-    new CSSValidation(cssDataManager),
-    cssDataManager
-  );
-}
-
-export function getLESSLanguageService(
-  options: LanguageServiceOptions = defaultLanguageServiceOptions
-): LanguageService {
-  const cssDataManager = new CSSDataManager(options);
-  return createFacade(
-    new LESSParser(),
-    new LESSCompletion(options, cssDataManager),
-    new CSSHover(options && options.clientCapabilities, cssDataManager),
-    new CSSNavigation(options && options.fileSystemProvider, true),
+    new PostCSSNavigation(options && options.fileSystemProvider),
     new CSSCodeActions(cssDataManager),
     new CSSValidation(cssDataManager),
     cssDataManager

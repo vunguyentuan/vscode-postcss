@@ -5,6 +5,7 @@
 // file generated from @vscode/web-custom-data NPM package
 
 import { CSSDataV1 } from '../cssLanguageTypes';
+import { postCSSCustomData } from './postCSSCustomData';
 
 export const cssData : CSSDataV1 = {
 	"version": 1.1,
@@ -19946,7 +19947,8 @@ export const cssData : CSSDataV1 = {
 			"syntax": "auto | contain | cover",
 			"relevance": 50,
 			"description": "The border-block-style CSS property defines the style of the logical block borders of an element, which maps to a physical border style depending on the element's writing mode, directionality, and text orientation."
-		}
+		},
+		...(postCSSCustomData.properties || [])
 	],
 	"atDirectives": [
 		{
@@ -20116,7 +20118,8 @@ export const cssData : CSSDataV1 = {
 				"S4"
 			],
 			"description": "Defines set of animation key frames."
-		}
+		},
+		...(postCSSCustomData.atDirectives || [])
 	],
 	"pseudoClasses": [
 		{
@@ -21142,7 +21145,8 @@ export const cssData : CSSDataV1 = {
 			"name": ":picture-in-picture",
 			"status": "experimental",
 			"description": "The :picture-in-picture CSS pseudo-class matches the element which is currently in picture-in-picture mode."
-		}
+		},
+		...(postCSSCustomData.pseudoClasses || [])
 	],
 	"pseudoElements": [
 		{
@@ -21957,6 +21961,7 @@ export const cssData : CSSDataV1 = {
 				}
 			],
 			"description": "The ::spelling-error CSS pseudo-element represents a text segment which the user agent has flagged as incorrectly spelled."
-		}
+		},
+		...(postCSSCustomData.pseudoElements || [])
 	]
 };

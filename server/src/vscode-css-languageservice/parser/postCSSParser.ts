@@ -246,9 +246,10 @@ export class PostCSSParser extends cssParser.Parser {
 				|| this._parseControlStatement() // @if, @while, @for, @each
 				|| this._parseFunctionDeclaration() // @function
 				|| this._parseExtends() // @extends
-				|| this._parseMixinReference() // @include
-				|| this._parseMixinContent() // @content
-				|| this._parseMixinDeclaration() // nested @mixin
+				|| this._parseMixinReference() // @mixin
+				|| this._parseMixinContent() // @mixin-content
+				|| this._parseMixinDeclaration() // nested @define-mixin
+				|| this._parseNestedKeyword() // nested @nest
 				|| this._parseRuleset(true) // @at-rule
 				|| this._parseSupports(true) // @supports
 				|| super._parseRuleSetDeclarationAtStatement();
@@ -530,7 +531,39 @@ export class PostCSSParser extends cssParser.Parser {
 	}
 
 	public _parseMixinDeclaration(): nodes.Node | null {
-		if (!this.peekKeyword('@mixin')) {
+		if (!this.peekKeyword('@define-mixin')) {
+			return null;
+		}
+
+		const node = <nodes.MixinDeclaration>this.create(nodes.MixinDeclaration);
+		this.consumeToken();
+
+		if (!node.setIdentifier(this._parseIdent([nodes.ReferenceType.Mixin]))) {
+			return this.finish(node, ParseError.IdentifierExpected, [TokenType.CurlyR]);
+		}
+
+		if (this.accept(TokenType.ParenthesisL)) {
+			if (node.getParameters().addChild(this._parseParameterDeclaration())) {
+				while (this.accept(TokenType.Comma)) {
+					if (this.peek(TokenType.ParenthesisR)) {
+						break;
+					}
+					if (!node.getParameters().addChild(this._parseParameterDeclaration())) {
+						return this.finish(node, ParseError.VariableNameExpected);
+					}
+				}
+			}
+
+			if (!this.accept(TokenType.ParenthesisR)) {
+				return this.finish(node, ParseError.RightParenthesisExpected, [TokenType.CurlyR]);
+			}
+		}
+
+		return this._parseBody(node, this._parseRuleSetDeclaration.bind(this));
+	}
+
+	public _parseNestedKeyword(): nodes.Node | null {
+		if (!this.peekKeyword('@nest')) {
 			return null;
 		}
 
@@ -582,7 +615,7 @@ export class PostCSSParser extends cssParser.Parser {
 	}
 
 	public _parseMixinContent(): nodes.Node | null {
-		if (!this.peekKeyword('@content')) {
+		if (!this.peekKeyword('@mixin-content')) {
 			return null;
 		}
 		const node = this.create(nodes.MixinContentReference);
@@ -608,7 +641,7 @@ export class PostCSSParser extends cssParser.Parser {
 
 
 	public _parseMixinReference(): nodes.Node | null {
-		if (!this.peekKeyword('@include')) {
+		if (!this.peekKeyword('@mixin')) {
 			return null;
 		}
 

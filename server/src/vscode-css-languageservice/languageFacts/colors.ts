@@ -305,7 +305,7 @@ export function colorFromHex(text: string): Color | null {
 	return null;
 }
 
-export function colorFrom256RGB(red: number, green: number, blue: number, alpha: number = 1.0): Color {
+export function colorFrom256RGB(red: number, green: number, blue: number, alpha = 1.0): Color {
 	return {
 		red: red / 255.0,
 		green: green / 255.0,
@@ -314,7 +314,7 @@ export function colorFrom256RGB(red: number, green: number, blue: number, alpha:
 	};
 }
 
-export function colorFromHSL(hue: number, sat: number, light: number, alpha: number = 1.0): Color {
+export function colorFromHSL(hue: number, sat: number, light: number, alpha = 1.0): Color {
 	hue = hue / 60.0;
 	if (sat === 0) {
 		return { red: light, green: light, blue: light, alpha };
@@ -364,7 +364,7 @@ export function hslFromColor(rgba: Color): HSLA {
 	return { h, s, l, a };
 }
 
-export function colorFromHWB(hue: number, white: number, black: number, alpha: number = 1.0): Color {
+export function colorFromHWB(hue: number, white: number, black: number, alpha = 1.0): Color {
 	if (white + black >= 1) {
 		const gray = white / (white + black);
 		return {red: gray, green: gray, blue: gray, alpha};
