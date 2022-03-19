@@ -1,6 +1,6 @@
 {
 	"name": "PostCSS",
-	"scopeName": "source.css",
+	"scopeName": "source.css.scss",
 	"patterns": [
 		{
 			"include": "#variable_setting"

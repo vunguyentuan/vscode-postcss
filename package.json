@@ -37,7 +37,6 @@
           "pcss"
         ],
         "extensions": [
-          ".css",
           ".pcss",
           ".postcss"
         ],
@@ -50,7 +49,7 @@
     ],
     "grammars": [
       {
-        "scopeName": "source.css",
+        "scopeName": "source.css.scss",
         "path": "./syntaxes/postcss.tmLanguage.json",
         "language": "postcss"
       },
