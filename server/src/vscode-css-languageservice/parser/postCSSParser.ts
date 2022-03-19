@@ -25,9 +25,9 @@ export class PostCSSParser extends cssParser.Parser {
 		if (this.peek(TokenType.AtKeyword)) {
 			return this._parseWarnAndDebug() // @warn, @debug and @error statements
 				|| this._parseControlStatement() // @if, @while, @for, @each
-				|| this._parseMixinDeclaration() // @mixin
-				|| this._parseMixinContent() // @content
-				|| this._parseMixinReference() // @include
+				|| this._parseMixinDeclaration() // @define-mixin
+				|| this._parseMixinContent() // @mixin-content
+				|| this._parseMixinReference() // @mixin
 				|| this._parseFunctionDeclaration() // @function
 				|| this._parseForward() // @forward
 				|| this._parseUse() // @use
@@ -301,7 +301,7 @@ export class PostCSSParser extends cssParser.Parser {
 	}
 
 	public _parseExtends(): nodes.Node | null {
-		if (this.peekKeyword('@extend')) {
+		if (this.peekKeyword('composes')) {
 			const node = <nodes.ExtendsReference>this.create(nodes.ExtendsReference);
 			this.consumeToken();
 			if (!node.getSelectors().addChild(this._parseSimpleSelector())) {

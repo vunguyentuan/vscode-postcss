@@ -64,6 +64,7 @@ connection.onInitialize((params: InitializeParams): InitializeResult => {
       documentHighlightProvider: true,
       codeActionProvider: true,
       renameProvider: true,
+      colorProvider: true,
     },
   };
 });
@@ -233,6 +234,31 @@ connection.onRenameRequest((renameParameters) => {
     renameParameters.newName,
     stylesheet
   );
+});
+
+connection.onDocumentColor((params, token) => {
+  const document = documents.get(params.textDocument.uri);
+  console.log("onDocumentColor", document);
+  if (document) {
+    const stylesheet = stylesheets.get(document);
+    return getLanguageService(document).findDocumentColors(document, stylesheet);
+  }
+  return [];
+});
+
+connection.onColorPresentation((params, token) => {
+  const document = documents.get(params.textDocument.uri);
+  console.log("onColorPresentation", document);
+  if (document) {
+    const stylesheet = stylesheets.get(document);
+    return getLanguageService(document).getColorPresentations(
+      document,
+      stylesheet,
+      params.color,
+      params.range
+    );
+  }
+  return [];
 });
 
 // Listen on the connection

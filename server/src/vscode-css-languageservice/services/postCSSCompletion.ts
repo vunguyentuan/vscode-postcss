@@ -43,14 +43,7 @@ export class PostCSSCompletion extends CSSCompletion {
 	];
 
 	private static selectorFuncs: IFunctionInfo[] = [
-		{ func: 'selector-nest($selectors…)', desc: localize('postcss.builtin.selector-nest', 'Nests selector beneath one another like they would be nested in the stylesheet.') },
-		{ func: 'selector-append($selectors…)', desc: localize('postcss.builtin.selector-append', 'Appends selectors to one another without spaces in between.') },
-		{ func: 'selector-extend($selector, $extendee, $extender)', desc: localize('postcss.builtin.selector-extend', 'Extends $extendee with $extender within $selector.') },
-		{ func: 'selector-replace($selector, $original, $replacement)', desc: localize('postcss.builtin.selector-replace', 'Replaces $original with $replacement within $selector.') },
-		{ func: 'selector-unify($selector1, $selector2)', desc: localize('postcss.builtin.selector-unify', 'Unifies two selectors to produce a selector that matches elements matched by both.') },
-		{ func: 'is-superselector($super, $sub)', desc: localize('postcss.builtin.is-superselector', 'Returns whether $super matches all the elements $sub does, and possibly more.') },
-		{ func: 'simple-selectors($selector)', desc: localize('postcss.builtin.simple-selectors', 'Returns the simple selectors that comprise a compound selector.') },
-		{ func: 'selector-parse($selector)', desc: localize('postcss.builtin.selector-parse', 'Parses a selector into the format returned by &.') }
+		// { func: 'selector-nest($selectors…)', desc: localize('postcss.builtin.selector-nest', 'Nests selector beneath one another like they would be nested in the stylesheet.') },
 	];
 
 	private static builtInFuncs: IFunctionInfo[] = [
@@ -66,22 +59,22 @@ export class PostCSSCompletion extends CSSCompletion {
 	];
 
 	private static postcssModuleLoaders = [
-		{
-			label: "@use",
-			documentation: localize("postcss.builtin.@use", "Loads mixins, functions, and variables from other Sass stylesheets as 'modules', and combines CSS from multiple stylesheets together."),
-			references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/at-rules/use' }],
-			insertText: "@use $0;",
-			insertTextFormat: InsertTextFormat.Snippet,
-			kind: CompletionItemKind.Keyword
-		},
-		{
-			label: "@forward",
-			documentation: localize("postcss.builtin.@forward", "Loads a Sass stylesheet and makes its mixins, functions, and variables available when this stylesheet is loaded with the @use rule."),
-			references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/at-rules/forward' }],
-			insertText: "@forward $0;",
-			insertTextFormat: InsertTextFormat.Snippet,
-			kind: CompletionItemKind.Keyword
-		},
+		// {
+		// 	label: "@use",
+		// 	documentation: localize("postcss.builtin.@use", "Loads mixins, functions, and variables from other Sass stylesheets as 'modules', and combines CSS from multiple stylesheets together."),
+		// 	references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/at-rules/use' }],
+		// 	insertText: "@use $0;",
+		// 	insertTextFormat: InsertTextFormat.Snippet,
+		// 	kind: CompletionItemKind.Keyword
+		// },
+		// {
+		// 	label: "@forward",
+		// 	documentation: localize("postcss.builtin.@forward", "Loads a Sass stylesheet and makes its mixins, functions, and variables available when this stylesheet is loaded with the @use rule."),
+		// 	references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/at-rules/forward' }],
+		// 	insertText: "@forward $0;",
+		// 	insertTextFormat: InsertTextFormat.Snippet,
+		// 	kind: CompletionItemKind.Keyword
+		// },
 	];
 
 	private static postcssModuleBuiltIns = [
@@ -90,36 +83,36 @@ export class PostCSSCompletion extends CSSCompletion {
 			documentation: localize('postcss.builtin.sass:math', 'Provides functions that operate on numbers.'),
 			references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/math' }]
 		},
-		{
-			label: 'sass:string',
-			documentation: localize('postcss.builtin.sass:string', 'Makes it easy to combine, search, or split apart strings.'),
-			references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/string' }]
-		},
-		{
-			label: 'sass:color',
-			documentation: localize('postcss.builtin.sass:color', 'Generates new colors based on existing ones, making it easy to build color themes.'),
-			references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/color' }]
-		},
-		{
-			label: 'sass:list',
-			documentation: localize('postcss.builtin.sass:list', 'Lets you access and modify values in lists.'),
-			references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/list' }]
-		},
-		{
-			label: 'sass:map',
-			documentation: localize('postcss.builtin.sass:map', 'Makes it possible to look up the value associated with a key in a map, and much more.'),
-			references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/map' }]
-		},
-		{
-			label: 'sass:selector',
-			documentation: localize('postcss.builtin.sass:selector', 'Provides access to Sass’s powerful selector engine.'),
-			references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/selector' }]
-		},
-		{
-			label: 'sass:meta',
-			documentation: localize('postcss.builtin.sass:meta', 'Exposes the details of Sass’s inner workings.'),
-			references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/meta' }]
-		},
+		// {
+		// 	label: 'sass:string',
+		// 	documentation: localize('postcss.builtin.sass:string', 'Makes it easy to combine, search, or split apart strings.'),
+		// 	references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/string' }]
+		// },
+		// {
+		// 	label: 'sass:color',
+		// 	documentation: localize('postcss.builtin.sass:color', 'Generates new colors based on existing ones, making it easy to build color themes.'),
+		// 	references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/color' }]
+		// },
+		// {
+		// 	label: 'sass:list',
+		// 	documentation: localize('postcss.builtin.sass:list', 'Lets you access and modify values in lists.'),
+		// 	references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/list' }]
+		// },
+		// {
+		// 	label: 'sass:map',
+		// 	documentation: localize('postcss.builtin.sass:map', 'Makes it possible to look up the value associated with a key in a map, and much more.'),
+		// 	references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/map' }]
+		// },
+		// {
+		// 	label: 'sass:selector',
+		// 	documentation: localize('postcss.builtin.sass:selector', 'Provides access to Sass’s powerful selector engine.'),
+		// 	references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/selector' }]
+		// },
+		// {
+		// 	label: 'sass:meta',
+		// 	documentation: localize('postcss.builtin.sass:meta', 'Exposes the details of Sass’s inner workings.'),
+		// 	references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/meta' }]
+		// },
 	];
 
 

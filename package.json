@@ -51,7 +51,7 @@
     "grammars": [
       {
         "scopeName": "source.css",
-        "path": "./syntaxes/source.css.tmLanguage.json",
+        "path": "./syntaxes/postcss.tmLanguage.json",
         "language": "postcss"
       },
       {

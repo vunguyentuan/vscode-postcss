@@ -12,6 +12,9 @@
       "include": "#escapes"
     },
     {
+      "include": "#rule-list"
+    },
+    {
       "include": "#global-rule"
     },
     {
@@ -31,9 +34,6 @@
     },
     {
       "include": "#at-rules"
-    },
-    {
-      "include": "#rule-list"
     }
   ],
   "repository": {
@@ -2595,6 +2595,9 @@
             },
             "2": {
               "patterns": [
+                {
+                  "include": "#interpolation"
+                },
                 {
                   "include": "#escapes"
                 }
