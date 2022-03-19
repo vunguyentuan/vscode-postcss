@@ -17,8 +17,20 @@
 ## Features
 - Basic autocomplete
 - Syntax highlighting
+- Support color preview
 - Play nicely with [CSS Variable Autocomplete](https://marketplace.visualstudio.com/items?itemName=vunguyentuan.vscode-css-variables) extension.
 
+## Support for Emmet
+
+1. Open the command palette and select **Preferences: Open Settings (JSON)**
+2. Add the following configuration:
+
+```json
+{
+  "emmet.includeLanguages": {
+    "postcss": "css"
+  }
+}
+```
 ## Future development
 - Add real postcss language service server (currently using SASS language service with some tweaks)
-- Add support color preview
