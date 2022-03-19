@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 'use strict';
-import * as scssScanner from './scssScanner';
+import * as postcssScanner from './postcssScanner';
 import { TokenType } from './cssScanner';
 import * as cssParser from './cssParser';
 import * as nodes from './cssNodes';
@@ -18,7 +18,7 @@ import { ParseError } from './cssErrors';
 export class PostCSSParser extends cssParser.Parser {
 
 	public constructor() {
-		super(new scssScanner.SCSSScanner());
+		super(new postcssScanner.PostCSSScanner());
 	}
 
 	public _parseStylesheetStatement(isNested = false): nodes.Node | null {
@@ -64,7 +64,7 @@ export class PostCSSParser extends cssParser.Parser {
 
 	// scss variables: $font-size: 12px;
 	public _parseVariableDeclaration(panic: TokenType[] = []): nodes.VariableDeclaration | null {
-		if (!this.peek(scssScanner.VariableName)) {
+		if (!this.peek(postcssScanner.VariableName)) {
 			return null;
 		}
 
@@ -123,7 +123,7 @@ export class PostCSSParser extends cssParser.Parser {
 	}
 
 	public _parseVariable(): nodes.Variable | null {
-		if (!this.peek(scssScanner.VariableName)) {
+		if (!this.peek(postcssScanner.VariableName)) {
 			return null;
 		}
 		const node = <nodes.Variable>this.create(nodes.Variable);
@@ -155,7 +155,7 @@ export class PostCSSParser extends cssParser.Parser {
 	}
 
 	public _parseIdent(referenceTypes?: nodes.ReferenceType[]): nodes.Identifier | null {
-		if (!this.peek(TokenType.Ident) && !this.peek(scssScanner.InterpolationFunction) && !this.peekDelim('-')) {
+		if (!this.peek(TokenType.Ident) && !this.peek(postcssScanner.InterpolationFunction) && !this.peekDelim('-')) {
 			return null;
 		}
 
@@ -196,17 +196,17 @@ export class PostCSSParser extends cssParser.Parser {
 	}
 
 	public _parseInterpolation(): nodes.Node | null {
-		if (this.peek(scssScanner.InterpolationFunction)) {
+		if (this.peek(postcssScanner.InterpolationFunction)) {
 			const node = this.create(nodes.Interpolation);
 			this.consumeToken();
 			if (!node.addChild(this._parseExpr()) && !this._parseSelectorCombinator()) {
-				if (this.accept(TokenType.CurlyR)) {
+				if (this.accept(TokenType.ParenthesisR)) {
 					return this.finish(node);
 				}
 				return this.finish(node, ParseError.ExpressionExpected);
 			}
-			if (!this.accept(TokenType.CurlyR)) {
-				return this.finish(node, ParseError.RightCurlyExpected);
+			if (!this.accept(TokenType.ParenthesisR)) {
+				return this.finish(node, ParseError.RightParenthesisExpected);
 			}
 			return this.finish(node);
 		}
@@ -214,8 +214,8 @@ export class PostCSSParser extends cssParser.Parser {
 	}
 
 	public _parseOperator(): nodes.Node | null {
-		if (this.peek(scssScanner.EqualsOperator) || this.peek(scssScanner.NotEqualsOperator)
-			|| this.peek(scssScanner.GreaterEqualsOperator) || this.peek(scssScanner.SmallerEqualsOperator)
+		if (this.peek(postcssScanner.EqualsOperator) || this.peek(postcssScanner.NotEqualsOperator)
+			|| this.peek(postcssScanner.GreaterEqualsOperator) || this.peek(postcssScanner.SmallerEqualsOperator)
 			|| this.peekDelim('>') || this.peekDelim('<')
 			|| this.peekIdent('and') || this.peekIdent('or')
 			|| this.peekDelim('%')
@@ -542,22 +542,22 @@ export class PostCSSParser extends cssParser.Parser {
 			return this.finish(node, ParseError.IdentifierExpected, [TokenType.CurlyR]);
 		}
 
-		if (this.accept(TokenType.ParenthesisL)) {
+		// if (this.accept(TokenType.ParenthesisL)) {
 			if (node.getParameters().addChild(this._parseParameterDeclaration())) {
 				while (this.accept(TokenType.Comma)) {
-					if (this.peek(TokenType.ParenthesisR)) {
-						break;
-					}
+					// if (this.peek(TokenType.ParenthesisR)) {
+					// 	break;
+					// }
 					if (!node.getParameters().addChild(this._parseParameterDeclaration())) {
 						return this.finish(node, ParseError.VariableNameExpected);
 					}
 				}
 			}
 
-			if (!this.accept(TokenType.ParenthesisR)) {
-				return this.finish(node, ParseError.RightParenthesisExpected, [TokenType.CurlyR]);
-			}
-		}
+			// if (!this.accept(TokenType.ParenthesisR)) {
+			// 	return this.finish(node, ParseError.RightParenthesisExpected, [TokenType.CurlyR]);
+			// }
+		// }
 
 		return this._parseBody(node, this._parseRuleSetDeclaration.bind(this));
 	}
@@ -602,7 +602,7 @@ export class PostCSSParser extends cssParser.Parser {
 			return null;
 		}
 
-		if (this.accept(scssScanner.Ellipsis)) {
+		if (this.accept(postcssScanner.Ellipsis)) {
 			// ok
 		}
 
@@ -672,22 +672,22 @@ export class PostCSSParser extends cssParser.Parser {
 			node.addChild(moduleToken);
 		}
 
-		if (this.accept(TokenType.ParenthesisL)) {
+		// if (this.accept(TokenType.ParenthesisL)) {
 			if (node.getArguments().addChild(this._parseFunctionArgument())) {
 				while (this.accept(TokenType.Comma)) {
-					if (this.peek(TokenType.ParenthesisR)) {
-						break;
-					}
+					// if (this.peek(TokenType.ParenthesisR)) {
+					// 	break;
+					// }
 					if (!node.getArguments().addChild(this._parseFunctionArgument())) {
 						return this.finish(node, ParseError.ExpressionExpected);
 					}
 				}
 			}
 
-			if (!this.accept(TokenType.ParenthesisR)) {
-				return this.finish(node, ParseError.RightParenthesisExpected);
-			}
-		}
+			// if (!this.accept(TokenType.ParenthesisR)) {
+			// 	return this.finish(node, ParseError.RightParenthesisExpected);
+			// }
+		// }
 
 		if (this.peekIdent('using') || this.peek(TokenType.CurlyL)) {
 			node.setContent(this._parseMixinContentDeclaration());
@@ -736,7 +736,7 @@ export class PostCSSParser extends cssParser.Parser {
 		const argument = this._parseVariable();
 		if (argument) {
 			if (!this.accept(TokenType.Colon)) {
-				if (this.accept(scssScanner.Ellipsis)) { // optional
+				if (this.accept(postcssScanner.Ellipsis)) { // optional
 					node.setValue(argument);
 					return this.finish(node);
 				} else {
@@ -748,7 +748,7 @@ export class PostCSSParser extends cssParser.Parser {
 		}
 
 		if (node.setValue(this._parseExpr(true))) {
-			this.accept(scssScanner.Ellipsis); // #43746
+			this.accept(postcssScanner.Ellipsis); // #43746
 			node.addChild(this._parsePrio()); // #9859
 			return this.finish(node);
 		} else if (node.setValue(this._tryParsePrio())) {
