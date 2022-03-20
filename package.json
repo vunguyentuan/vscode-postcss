@@ -28,6 +28,20 @@
   },
   "main": "./client/out/extension.js",
   "contributes": {
+    "configuration": [
+      {
+        "id": "css",
+        "title": "PostCSS",
+        "properties": {
+          "postcss.validate": {
+            "type": "boolean",
+            "scope": "resource",
+            "default": true,
+            "description": "Enables or disables all validations."
+          }
+        }
+      }
+    ],
     "languages": [
       {
         "id": "postcss",

@@ -4,6 +4,7 @@ import {
   InitializeParams,
   TextDocumentSyncKind,
   InitializeResult,
+  ConfigurationRequest,
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
@@ -36,6 +37,33 @@ documents.listen(connection);
 const stylesheets = getLanguageModelCache<Stylesheet>(10, 60, (document) =>
   getLanguageService(document).parseStylesheet(document)
 );
+
+const documentSettings: {
+  [key: string]: Thenable<LanguageSettings | undefined>
+} = {};
+let scopedSettingsSupport = false;
+
+function getDocumentSettings(
+  textDocument: TextDocument
+): Thenable<LanguageSettings | undefined> {
+  if (scopedSettingsSupport) {
+    let promise = documentSettings[textDocument.uri];
+    if (!promise) {
+      const configRequestParam = {
+        items: [
+          { scopeUri: textDocument.uri, section: textDocument.languageId },
+        ],
+      };
+      promise = connection
+        .sendRequest(ConfigurationRequest.type, configRequestParam)
+        .then((s) => s[0]);
+      documentSettings[textDocument.uri] = promise;
+    }
+    return promise;
+  }
+  return Promise.resolve(undefined);
+}
+
 documents.onDidClose((e) => {
   stylesheets.onDocumentRemoved(e.document);
 });
@@ -52,6 +80,25 @@ connection.onInitialize((params: InitializeParams): InitializeResult => {
     params.capabilities.textDocument.completion &&
     params.capabilities.textDocument.completion.completionItem &&
     params.capabilities.textDocument.completion.completionItem.snippetSupport;
+
+  function getClientCapability<T>(name: string, def: T) {
+    const keys = name.split('.');
+    let c: any = params.capabilities;
+    for (let i = 0; c && i < keys.length; i++) {
+      // eslint-disable-next-line no-prototype-builtins
+      if (!c.hasOwnProperty(keys[i])) {
+        return def;
+      }
+      c = c[keys[i]];
+    }
+    return c;
+  }
+
+  scopedSettingsSupport = !!getClientCapability(
+    'workspace.configuration',
+    false
+  );
+
   return {
     capabilities: {
       // Tell the client that the server works in FULL text document sync mode
@@ -124,25 +171,20 @@ function triggerValidation(textDocument: TextDocument): void {
 }
 
 function validateTextDocument(textDocument: TextDocument): void {
-  const stylesheet = stylesheets.get(textDocument);
-  const diagnostics = getLanguageService(textDocument).doValidation(
-    textDocument,
-    stylesheet
-  );
+  const settingsPromise = getDocumentSettings(textDocument);
+  settingsPromise.then(async (settings) => {
+    const stylesheet = stylesheets.get(textDocument);
 
-  // fiter out postcss syntax errors with regex /Unknown at rule @custom-/
-  // const filteredDiagnostics = diagnostics.filter(
-  //   (diagnostic) =>
-  //     !(
-  //       diagnostic.message.match(/Unknown at rule @/) ||
-  //       diagnostic.message.match(/Unknown property: '(composes)/)
-  //     )
-  // );
+    const diagnostics = settings.validate === false ? [] : getLanguageService(textDocument).doValidation(
+      textDocument,
+      stylesheet
+    );
 
-  // Send the computed diagnostics to VSCode.
-  connection.sendDiagnostics({
-    uri: textDocument.uri,
-    diagnostics: diagnostics,
+    // Send the computed diagnostics to VSCode.
+    connection.sendDiagnostics({
+      uri: textDocument.uri,
+      diagnostics: diagnostics,
+    });
   });
 }
 
@@ -238,7 +280,6 @@ connection.onRenameRequest((renameParameters) => {
 
 connection.onDocumentColor((params, token) => {
   const document = documents.get(params.textDocument.uri);
-  console.log("onDocumentColor", document);
   if (document) {
     const stylesheet = stylesheets.get(document);
     return getLanguageService(document).findDocumentColors(document, stylesheet);
@@ -248,7 +289,6 @@ connection.onDocumentColor((params, token) => {
 
 connection.onColorPresentation((params, token) => {
   const document = documents.get(params.textDocument.uri);
-  console.log("onColorPresentation", document);
   if (document) {
     const stylesheet = stylesheets.get(document);
     return getLanguageService(document).getColorPresentations(

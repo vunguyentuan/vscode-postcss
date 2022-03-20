@@ -32,5 +32,11 @@
   }
 }
 ```
+
+## Disable validation
+```
+"postcss.validate": false
+```
+
 ## Future development
 - Add real postcss language service server (currently using SASS language service with some tweaks)
