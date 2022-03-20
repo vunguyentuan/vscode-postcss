@@ -37,6 +37,7 @@
           "pcss"
         ],
         "extensions": [
+          ".css",
           ".pcss",
           ".postcss"
         ],
