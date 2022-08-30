@@ -1,0 +1,43 @@
+{
+	"name": "postcss-language-server",
+	"description": "PostCSS Language Server in node.",
+	"version": "1.0.0",
+	"author": "Vu Nguyen",
+	"license": "MIT",
+	"engines": {
+		"node": "^16.0.0"
+	},
+	"scripts": {
+		"test": "jest --passWithNoTests",
+		"build": "tsup src/index.ts --format esm,cjs",
+		"dev": "tsup src/index.ts --format esm,cjs --watch",
+		"clean": "rm -rf dist",
+		"lint": "eslint ./src --ext .ts,.tsx --fix"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/vunguyentuan/vscode-postcss.git"
+	},
+	"dependencies": {
+		"culori": "0.20.1",
+		"fast-glob": "^3.2.7",
+		"line-column": "^1.0.2",
+		"postcss": "^8.4.7",
+		"vscode-languageserver": "^7.0.0",
+		"vscode-languageserver-textdocument": "^1.0.1",
+    "vscode-languageserver-types": "^3.16.0",
+    "vscode-nls": "^5.0.0",
+    "vscode-uri": "^3.0.2"
+	},
+	"devDependencies": {
+		"@types/jest": "^28.1.8",
+		"jest": "^28.0.0",
+		"ts-jest": "^28.0.8",
+		"tsup": "^6.2.3",
+		"typescript": "^4.8.2",
+		"eslint": "^8.23.0",
+		"eslint-config-airbnb-typescript": "^17.0.0",
+		"@typescript-eslint/eslint-plugin": "^5.35.1",
+		"@typescript-eslint/parser": "^5.35.1"
+	}
+}
