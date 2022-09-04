@@ -252,6 +252,7 @@ export class PostCSSParser extends cssParser.Parser {
 				|| this._parseNestedKeyword() // nested @nest
 				|| this._parseRuleset(true) // @at-rule
 				|| this._parseSupports(true) // @supports
+				|| this._parseLayer() // @layer
 				|| super._parseRuleSetDeclarationAtStatement();
 		}
 		return this._parseVariableDeclaration() // variable declaration

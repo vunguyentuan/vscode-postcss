@@ -94,6 +94,10 @@ export enum NodeType {
 	Forward,
 	ForwardVisibility,
 	Module,
+	UnicodeRange,
+	Layer,
+	LayerNameList,
+	LayerName
 }
 
 export enum ReferenceType {
@@ -197,7 +201,6 @@ export class Node {
 	}
 
 	private getTextProvider(): ITextProvider {
-		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		let node: Node | null = this;
 		while (node && !node.textProvider) {
 			node = node.parent;
@@ -265,7 +268,6 @@ export class Node {
 
 	public collectIssues(results: any[]): void {
 		if (this.issues) {
-			// eslint-disable-next-line prefer-spread
 			results.push.apply(results, this.issues);
 		}
 	}
@@ -378,7 +380,6 @@ export class Node {
 	}
 
 	public findParent(type: NodeType): Node | null {
-		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		let result: Node | null = this;
 		while (result && result.type !== type) {
 			result = result.parent;
@@ -387,7 +388,6 @@ export class Node {
 	}
 
 	public findAParent(...types: NodeType[]): Node | null {
-		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		let result: Node | null = this;
 		while (result && !types.some(t => result!.type === t)) {
 			result = result.parent;
@@ -403,7 +403,6 @@ export class Node {
 	}
 
 	public getData(key: string): any {
-		// eslint-disable-next-line no-prototype-builtins
 		if (!this.options || !this.options.hasOwnProperty(key)) {
 			return null;
 		}
@@ -426,6 +425,35 @@ export class Nodelist extends Node {
 	}
 }
 
+export class UnicodeRange extends Node {
+
+	public rangeStart?: Node;
+	public rangeEnd?: Node;
+
+	constructor(offset: number, length: number) {
+		super(offset, length);
+	}
+
+	public get type(): NodeType {
+		return NodeType.UnicodeRange;
+	}
+
+	public setRangeStart(rangeStart: Node | null): rangeStart is Node {
+		return this.setNode('rangeStart', rangeStart);
+	}
+
+	public getRangeStart(): Node | undefined {
+		return this.rangeStart;
+	}
+
+	public setRangeEnd(rangeEnd: Node | null): rangeEnd is Node {
+		return this.setNode('rangeEnd', rangeEnd);
+	}
+
+	public getRangeEnd(): Node | undefined {
+		return this.rangeEnd;
+	}
+}
 
 export class Identifier extends Node {
 
@@ -684,7 +712,7 @@ export class Property extends Node {
 	}
 
 	public getName(): string {
-		return trim(this.getText(), /[_\\+]+$/); /* +_: less merge */
+		return trim(this.getText(), /[_\+]+$/); /* +_: less merge */
 	}
 
 	public isCustomProperty(): boolean {
@@ -1149,6 +1177,28 @@ export class Supports extends BodyDeclaration {
 	}
 }
 
+export class Layer extends BodyDeclaration {
+
+	public names?: Node;
+
+	constructor(offset: number, length: number) {
+		super(offset, length);
+	}
+
+	public get type(): NodeType {
+		return NodeType.Layer;
+	}
+
+	public setNames(names: Node | null): names is Node {
+		return this.setNode('names', names);
+	}
+
+	public getNames(): Node | undefined {
+		return this.names;
+	}
+
+}
+
 
 export class Document extends BodyDeclaration {
 
@@ -1162,17 +1212,8 @@ export class Document extends BodyDeclaration {
 }
 
 export class Medialist extends Node {
-	private mediums?: Nodelist;
-
 	constructor(offset: number, length: number) {
 		super(offset, length);
-	}
-
-	public getMediums(): Nodelist {
-		if (!this.mediums) {
-			this.mediums = new Nodelist(this);
-		}
-		return this.mediums;
 	}
 }
 
@@ -1449,8 +1490,8 @@ export class NumericValue extends Node {
 
 export class VariableDeclaration extends AbstractDeclaration {
 
-	private variable: Variable | null = null;
-	private value: Node | null = null;
+	private variable: Variable | undefined;
+	private value: Node | undefined;
 	public needsSemicolon = true;
 
 	constructor(offset: number, length: number) {
@@ -1461,7 +1502,7 @@ export class VariableDeclaration extends AbstractDeclaration {
 		return NodeType.VariableDeclaration;
 	}
 
-	public setVariable(node: Variable | null): node is Variable {
+	public setVariable(node: Variable | undefined | null): node is Variable {
 		if (node) {
 			node.attachTo(this);
 			this.variable = node;
@@ -1470,7 +1511,7 @@ export class VariableDeclaration extends AbstractDeclaration {
 		return false;
 	}
 
-	public getVariable(): Variable | null {
+	public getVariable(): Variable | undefined {
 		return this.variable;
 	}
 
@@ -1478,7 +1519,7 @@ export class VariableDeclaration extends AbstractDeclaration {
 		return this.variable ? this.variable.getName() : '';
 	}
 
-	public setValue(node: Node | null): node is Node {
+	public setValue(node: Node | undefined | null): node is Node {
 		if (node) {
 			node.attachTo(this);
 			this.value = node;
@@ -1487,7 +1528,7 @@ export class VariableDeclaration extends AbstractDeclaration {
 		return false;
 	}
 
-	public getValue(): Node | null {
+	public getValue(): Node | undefined {
 		return this.value;
 	}
 }

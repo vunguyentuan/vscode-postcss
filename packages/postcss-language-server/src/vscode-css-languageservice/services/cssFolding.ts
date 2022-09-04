@@ -6,8 +6,7 @@
 
 import { TextDocument, FoldingRange, FoldingRangeKind } from '../cssLanguageTypes';
 import { TokenType, Scanner, IToken } from '../parser/cssScanner';
-import { SCSSScanner, InterpolationFunction } from '../parser/scssScanner';
-import { LESSScanner } from '../parser/lessScanner';
+import { PostCSSScanner, InterpolationFunction } from '../parser/postCSSScanner';
 
 type DelimiterType = 'brace' | 'comment';
 type Delimiter = { line: number, type: DelimiterType, isStart: boolean };
@@ -25,14 +24,7 @@ function computeFoldingRanges(document: TextDocument): FoldingRange[] {
 		return document.positionAt(t.offset + t.len).line;
 	}
 	function getScanner() {
-		switch (document.languageId) {
-			case 'scss':
-				return new SCSSScanner();
-			case 'less':
-				return new LESSScanner();
-			default:
-				return new Scanner();
-		}
+		return new PostCSSScanner();
 	}
 	function tokenToRange(t: IToken, kind?: FoldingRangeKind | string): FoldingRange | null {
 		const startLine = getStartLine(t);
