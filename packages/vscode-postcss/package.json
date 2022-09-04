@@ -1,6 +1,6 @@
 {
   "name": "vscode-postcss",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "displayName": "PostCSS Intellisense and Highlighting",
   "description": "Syntax highlighting and intellisense for PostCSS",
   "publisher": "vunguyentuan",
