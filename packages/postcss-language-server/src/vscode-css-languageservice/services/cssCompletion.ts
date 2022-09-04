@@ -931,7 +931,7 @@ export class CSSCompletion {
 		return result;
 	}
 
-	private makeTermProposal(symbol: symbol, parameters: nodes.Nodelist, existingNode: nodes.Node | null): CompletionItem {
+	private makeTermProposal(symbol: Symbol, parameters: nodes.Nodelist, existingNode: nodes.Node | null): CompletionItem {
 		const decl = <nodes.FunctionDeclaration>symbol.node;
 		const params = parameters.getChildren().map((c) => {
 			return (c instanceof nodes.FunctionParameter) ? (<nodes.FunctionParameter>c).getName() : c.getText();
