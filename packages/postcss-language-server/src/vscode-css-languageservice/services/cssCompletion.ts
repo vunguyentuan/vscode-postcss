@@ -361,7 +361,7 @@ export class CSSCompletion {
 				if (strings.endsWith(insertString, ')')) {
 					const from = insertString.lastIndexOf('(');
 					if (from !== -1) {
-						insertString = insertString.substr(0, from) + '($1)';
+						insertString = insertString.substring(0, from + 1) + '$1' + insertString.substring(from + 1);
 						insertTextFormat = SnippetFormat;
 					}
 				}
@@ -853,7 +853,7 @@ export class CSSCompletion {
 
 	public getCompletionsForVariableDeclaration(declaration: nodes.VariableDeclaration, result: CompletionList): CompletionList {
 		if (this.offset && isDefined(declaration.colonPosition) && this.offset > declaration.colonPosition) {
-			this.getVariableProposals(declaration.getValue(), result);
+			this.getVariableProposals(declaration.getValue() || null, result);
 		}
 		return result;
 	}
@@ -931,7 +931,7 @@ export class CSSCompletion {
 		return result;
 	}
 
-	private makeTermProposal(symbol: symbol, parameters: nodes.Nodelist, existingNode: nodes.Node | null): CompletionItem {
+	private makeTermProposal(symbol: Symbol, parameters: nodes.Nodelist, existingNode: nodes.Node | null): CompletionItem {
 		const decl = <nodes.FunctionDeclaration>symbol.node;
 		const params = parameters.getChildren().map((c) => {
 			return (c instanceof nodes.FunctionParameter) ? (<nodes.FunctionParameter>c).getName() : c.getText();

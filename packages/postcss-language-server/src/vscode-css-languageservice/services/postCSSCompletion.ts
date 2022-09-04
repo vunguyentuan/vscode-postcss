@@ -19,25 +19,6 @@ interface IFunctionInfo {
 }
 
 export class PostCSSCompletion extends CSSCompletion {
-
-	private static variableDefaults: { [key: string]: string; } = {
-		'$red': '1',
-		'$green': '2',
-		'$blue': '3',
-		'$alpha': '1.0',
-		'$color': '#000000',
-		'$weight': '0.5',
-		'$hue': '0',
-		'$saturation': '0%',
-		'$lightness': '0%',
-		'$degrees': '0',
-		'$amount': '0',
-		'$string': '""',
-		'$substring': '"s"',
-		'$number': '0',
-		'$limit': '1'
-	};
-
 	private static colorProposals: IFunctionInfo[] = [
 		{ func: 'color($colorSpace $arg1 $arg2 $arg3)', desc: localize('postcss.builtin.color', 'The color function takes parameters specifying a color, in an explicitly listed color space.') },
 	];
@@ -83,36 +64,36 @@ export class PostCSSCompletion extends CSSCompletion {
 			documentation: localize('postcss.builtin.sass:math', 'Provides functions that operate on numbers.'),
 			references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/math' }]
 		},
-		// {
-		// 	label: 'sass:string',
-		// 	documentation: localize('postcss.builtin.sass:string', 'Makes it easy to combine, search, or split apart strings.'),
-		// 	references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/string' }]
-		// },
-		// {
-		// 	label: 'sass:color',
-		// 	documentation: localize('postcss.builtin.sass:color', 'Generates new colors based on existing ones, making it easy to build color themes.'),
-		// 	references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/color' }]
-		// },
-		// {
-		// 	label: 'sass:list',
-		// 	documentation: localize('postcss.builtin.sass:list', 'Lets you access and modify values in lists.'),
-		// 	references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/list' }]
-		// },
-		// {
-		// 	label: 'sass:map',
-		// 	documentation: localize('postcss.builtin.sass:map', 'Makes it possible to look up the value associated with a key in a map, and much more.'),
-		// 	references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/map' }]
-		// },
-		// {
-		// 	label: 'sass:selector',
-		// 	documentation: localize('postcss.builtin.sass:selector', 'Provides access to Sass’s powerful selector engine.'),
-		// 	references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/selector' }]
-		// },
-		// {
-		// 	label: 'sass:meta',
-		// 	documentation: localize('postcss.builtin.sass:meta', 'Exposes the details of Sass’s inner workings.'),
-		// 	references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/meta' }]
-		// },
+		{
+			label: 'sass:string',
+			documentation: localize('postcss.builtin.sass:string', 'Makes it easy to combine, search, or split apart strings.'),
+			references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/string' }]
+		},
+		{
+			label: 'sass:color',
+			documentation: localize('postcss.builtin.sass:color', 'Generates new colors based on existing ones, making it easy to build color themes.'),
+			references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/color' }]
+		},
+		{
+			label: 'sass:list',
+			documentation: localize('postcss.builtin.sass:list', 'Lets you access and modify values in lists.'),
+			references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/list' }]
+		},
+		{
+			label: 'sass:map',
+			documentation: localize('postcss.builtin.sass:map', 'Makes it possible to look up the value associated with a key in a map, and much more.'),
+			references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/map' }]
+		},
+		{
+			label: 'sass:selector',
+			documentation: localize('postcss.builtin.sass:selector', 'Provides access to Sass’s powerful selector engine.'),
+			references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/selector' }]
+		},
+		{
+			label: 'sass:meta',
+			documentation: localize('postcss.builtin.sass:meta', 'Exposes the details of Sass’s inner workings.'),
+			references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/meta' }]
+		},
 	];
 
 

@@ -71,6 +71,16 @@ export class Parser {
 		this.token = this.scanner.scan();
 	}
 
+	public acceptUnicodeRange(): boolean {
+		const token = this.scanner.tryScanUnicode();
+		if (token) {
+			this.prevToken = token;
+			this.token = this.scanner.scan();
+			return true;
+		}
+		return false;
+	}
+
 	public mark(): IMark {
 		return {
 			prev: this.prevToken,
@@ -310,6 +320,7 @@ export class Parser {
 			|| this._parseFontFace()
 			|| this._parseKeyframe()
 			|| this._parseSupports(isNested)
+			|| this._parseLayer()
 			|| this._parseViewPort()
 			|| this._parseNamespace()
 			|| this._parseDocument()
@@ -353,7 +364,7 @@ export class Parser {
 	}
 
 	public _parseRuleSetDeclaration(): nodes.Node | null {
-		// https://www.w3.org/TR/css-syntax-3/#consume-a-list-of-declarations0
+		// https://www.w3.org/TR/css-syntax-3/#consume-a-list-of-declarations
 		if (this.peek(TokenType.AtKeyword)) {
 			return this._parseRuleSetDeclarationAtStatement();
 		}
@@ -666,6 +677,12 @@ export class Parser {
 
 
 	public _parseImport(): nodes.Node | null {
+		// @import [ <url> | <string> ]
+		//     [ layer | layer(<layer-name>) ]?
+		//     <import-condition> ;
+
+		// <import-conditions> = [ supports( [ <supports-condition> | <declaration> ] ) ]?
+		//                      <media-query-list>?
 		if (!this.peekKeyword('@import')) {
 			return null;
 		}
@@ -675,6 +692,25 @@ export class Parser {
 
 		if (!node.addChild(this._parseURILiteral()) && !node.addChild(this._parseStringLiteral())) {
 			return this.finish(node, ParseError.URIOrStringExpected);
+		}
+
+		if (this.acceptIdent('layer')) {
+			if (this.accept(TokenType.ParenthesisL)) {
+				if (!node.addChild(this._parseLayerName())) {
+					return this.finish(node, ParseError.IdentifierExpected, [TokenType.SemiColon]);
+				}
+				if (!this.accept(TokenType.ParenthesisR)) {
+					return this.finish(node, ParseError.RightParenthesisExpected, [TokenType.ParenthesisR], []);
+				}
+			}
+		}
+		if (this.acceptIdent('supports')) {
+			if (this.accept(TokenType.ParenthesisL)) {
+				node.addChild(this._tryToParseDeclaration() || this._parseSupportsCondition());
+				if (!this.accept(TokenType.ParenthesisR)) {
+					return this.finish(node, ParseError.RightParenthesisExpected, [TokenType.ParenthesisR], []);
+				}
+			}
 		}
 
 		if (!this.peek(TokenType.SemiColon) && !this.peek(TokenType.EOF)) {
@@ -794,6 +830,59 @@ export class Parser {
 		}
 
 		return this._parseBody(node, this._parseRuleSetDeclaration.bind(this));
+	}
+
+	public _parseLayer(): nodes.Node | null {
+		// @layer layer-name {rules}
+		// @layer layer-name;
+		// @layer layer-name, layer-name, layer-name;
+		// @layer {rules}
+		if (!this.peekKeyword('@layer')) {
+			return null;
+		}
+
+		const node = this.create(nodes.Layer);
+		this.consumeToken(); // @layer
+
+		const names = this._parseLayerNameList();
+		if (names) {
+			node.setNames(names);
+		}
+		if ((!names || names.getChildren().length === 1) && this.peek(TokenType.CurlyL)) {
+			return this._parseBody(node, this._parseStylesheetStatement.bind(this));
+		}
+		if (!this.accept(TokenType.SemiColon)) {
+			return this.finish(node, ParseError.SemiColonExpected);
+		}
+		return this.finish(node);
+	}
+
+	public _parseLayerNameList(): nodes.Node | null {
+		const node = this.createNode(nodes.NodeType.LayerNameList);
+		if (!node.addChild(this._parseLayerName())) {
+			return null;
+		}
+		while (this.accept(TokenType.Comma)) {
+			if (!node.addChild(this._parseLayerName())) {
+				return this.finish(node, ParseError.IdentifierExpected);
+			}
+		}
+		return this.finish(node);
+	}
+
+	public _parseLayerName(): nodes.Node | null {
+		// <layer-name> = <ident> [ '.' <ident> ]*
+		if (!this.peek(TokenType.Ident)) {
+			return null;
+		}
+		const node = this.createNode(nodes.NodeType.LayerName);
+		node.addChild(this._parseIdent());
+		while (!this.hasWhitespace() && this.acceptDelim('.')) {
+			if (this.hasWhitespace() || !node.addChild(this._parseIdent())) {
+				return this.finish(node, ParseError.IdentifierExpected);
+			}
+		}
+		return this.finish(node);
 	}
 
 	public _parseSupports(isNested = false): nodes.Node | null {
@@ -1403,10 +1492,10 @@ export class Parser {
 			if (!this.hasWhitespace() && this.accept(TokenType.ParenthesisL)) {
 				const tryAsSelector = () => {
 					const selectors = this.create(nodes.Node);
-					if (!selectors.addChild(this._parseSelector(false))) {
+					if (!selectors.addChild(this._parseSelector(true))) {
 						return null;
 					}
-					while (this.accept(TokenType.Comma) && selectors.addChild(this._parseSelector(false))) {
+					while (this.accept(TokenType.Comma) && selectors.addChild(this._parseSelector(true))) {
 						// loop
 					}
 					if (this.peek(TokenType.ParenthesisR)) {
@@ -1488,6 +1577,17 @@ export class Parser {
 		return this.finish(node);
 	}
 
+	public _parseUnicodeRange(): nodes.UnicodeRange | null {
+		if (!this.peekIdent('u')) {
+			return null;
+		}
+		const node = this.create(nodes.UnicodeRange);
+		if (!this.acceptUnicodeRange()) {
+			return null;
+		}
+		return this.finish(node);
+	}
+
 	public _parseNamedLine(): nodes.Node | null {
 		// https://www.w3.org/TR/css-grid-1/#named-lines
 		if (!this.peek(TokenType.BracketL)) {
@@ -1543,6 +1643,7 @@ export class Parser {
 
 	public _parseTermExpression(): nodes.Node | null {
 		return this._parseURILiteral() || // url before function
+			this._parseUnicodeRange() ||
 			this._parseFunction() || // function before ident
 			this._parseIdent() ||
 			this._parseStringLiteral() ||

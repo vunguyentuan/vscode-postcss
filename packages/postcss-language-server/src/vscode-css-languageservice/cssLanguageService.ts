@@ -4,10 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 
-import { Parser } from './parser/cssParser';
-import { CSSCompletion } from './services/cssCompletion';
 import { CSSHover } from './services/cssHover';
-import { CSSNavigation } from './services/cssNavigation';
 import { CSSCodeActions } from './services/cssCodeActions';
 import { CSSValidation } from './services/cssValidation';
 import { getFoldingRanges } from './services/cssFolding';
@@ -168,10 +165,10 @@ export function newCSSDataProvider(data: CSSDataV1): ICSSDataProvider {
 }
 
 function createFacade(
-  parser: Parser,
-  completion: CSSCompletion,
+  parser: PostCSSParser,
+  completion: PostCSSCompletion,
   hover: CSSHover,
-  navigation: CSSNavigation,
+  navigation: PostCSSNavigation,
   codeActions: CSSCodeActions,
   validation: CSSValidation,
   cssDataManager: CSSDataManager

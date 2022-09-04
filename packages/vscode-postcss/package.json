@@ -82,12 +82,11 @@
   },
   "scripts": {
 		"vscode:prepublish": "npm run build",
-		"build": "tsup src/index.ts src/server.ts --format cjs --external vscode --minify",
+		"build": "tsup src/index.ts src/server.ts --format cjs --external vscode",
 		"dev": "tsup src/index.ts src/server.ts --watch --format cjs --external vscode",
 		"clean": "rm -rf dist && rm -rf out && rm -rf .vscode-test",
 		"lint": "eslint ./src --ext .ts,.tsx --fix",
 		"pretest": "tsc -p ./",
-		"test": "node ./out/test/runTest.js",
 		"deploy": "vsce publish",
 		"package": "vsce package --pre-release"
 	},

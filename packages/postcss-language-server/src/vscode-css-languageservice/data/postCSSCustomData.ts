@@ -45,5 +45,8 @@ export const postCSSCustomData: CSSDataV1 = {
 			status: "nonstandard",
 			"description": "SCSS @mixin declaration replacement."
 		},
-	]
+	],
+
+	pseudoClasses: [],
+	pseudoElements: []
 };

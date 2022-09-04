@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -15,7 +16,7 @@ export class Scope {
 	public offset: number;
 	public length: number;
 
-	private symbols: symbol[];
+	private symbols: Symbol[];
 
 	constructor(offset: number, length: number) {
 		this.offset = offset;
@@ -58,11 +59,11 @@ export class Scope {
 		return this;
 	}
 
-	public addSymbol(symbol: symbol): void {
+	public addSymbol(symbol: Symbol): void {
 		this.symbols.push(symbol);
 	}
 
-	public getSymbol(name: string, type: nodes.ReferenceType): symbol | null {
+	public getSymbol(name: string, type: nodes.ReferenceType): Symbol | null {
 		for (let index = 0; index < this.symbols.length; index++) {
 			const symbol = this.symbols[index];
 			if (symbol.name === name && symbol.type === type) {
@@ -72,7 +73,7 @@ export class Scope {
 		return null;
 	}
 
-	public getSymbols(): symbol[] {
+	public getSymbols(): Symbol[] {
 		return this.symbols;
 	}
 }
@@ -238,9 +239,9 @@ export class Symbols {
 		node.acceptVisitor(new ScopeBuilder(this.global));
 	}
 
-	public findSymbolsAtOffset(offset: number, referenceType: nodes.ReferenceType): symbol[] {
+	public findSymbolsAtOffset(offset: number, referenceType: nodes.ReferenceType): Symbol[] {
 		let scope = this.global.findScope(offset, 0);
-		const result: symbol[] = [];
+		const result: Symbol[] = [];
 		const names: { [name: string]: boolean } = {};
 		while (scope) {
 			const symbols = scope.getSymbols();
@@ -256,7 +257,7 @@ export class Symbols {
 		return result;
 	}
 
-	private internalFindSymbol(node: nodes.Node, referenceTypes: nodes.ReferenceType[]): symbol | null {
+	private internalFindSymbol(node: nodes.Node, referenceTypes: nodes.ReferenceType[]): Symbol | null {
 		let scopeNode: nodes.Node | undefined = node;
 		if (node.parent instanceof nodes.FunctionParameter && node.parent.getParent() instanceof nodes.BodyDeclaration) {
 			scopeNode = (<nodes.BodyDeclaration>node.parent.getParent()).getDeclarations();
@@ -317,7 +318,7 @@ export class Symbols {
 		return null;
 	}
 
-	public findSymbolFromNode(node: nodes.Node): symbol | null {
+	public findSymbolFromNode(node: nodes.Node): Symbol | null {
 		if (!node) {
 			return null;
 		}
@@ -332,7 +333,7 @@ export class Symbols {
 		return null;
 	}
 
-	public matchesSymbol(node: nodes.Node, symbol: symbol): boolean {
+	public matchesSymbol(node: nodes.Node, symbol: Symbol): boolean {
 		if (!node) {
 			return false;
 		}
@@ -353,7 +354,7 @@ export class Symbols {
 	}
 
 
-	public findSymbol(name: string, type: nodes.ReferenceType, offset: number): symbol | null {
+	public findSymbol(name: string, type: nodes.ReferenceType, offset: number): Symbol | null {
 		let scope = this.global.findScope(offset);
 		while (scope) {
 			const symbol = scope.getSymbol(name, type);
