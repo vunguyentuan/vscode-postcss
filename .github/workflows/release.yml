@@ -34,13 +34,13 @@ jobs:
 
       - name: Publish to VSCode Marketplace
         if: steps.changesets.outputs.published == 'true'
-        working-directory: ./packages/vscode-css-variables
+        working-directory: ./packages/vscode-postcss
         run: |
           npm i
           npx vsce publish -p ${{ secrets.VSCE_PAT }}
       - name: Publish to OpenVSX
         if: steps.changesets.outputs.published == 'true'
-        working-directory: ./packages/vscode-css-variables
+        working-directory: ./packages/vscode-postcss
         run: |
           npm i
           npx ovsx publish -p ${{ secrets.OVSX_TOKEN }}
