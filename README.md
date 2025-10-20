@@ -8,6 +8,8 @@
 <a href="https://marketplace.visualstudio.com/items?itemName=vunguyentuan.vscode-postcss"><img src="https://vsmarketplacebadge.apphb.com/rating-star/vunguyentuan.vscode-postcss.svg" alt=""/></a>
 </p>
 
+Checkout [Chronoid App - Automatic Time Tracking & Productivity for macOS →](https://www.chronoid.com?utm=github) 
+
 ## Installation
 
 **[Install via the Visual Studio Code Marketplace →](https://marketplace.visualstudio.com/items?itemName=vunguyentuan.vscode-postcss)**
